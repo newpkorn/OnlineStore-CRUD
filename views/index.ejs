@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K-Shop</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <script src="js/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="js/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+</head>
+
+<body>
+    <%- include('navbar') %>
+
+        <!-- Modal -->
+        <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalLabel"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img class="card-img-top img-fluid mb-4" id="modalImage" />
+                        <div class="m-auto">
+                            <h4 id="modalProductName"></h4>
+                            <h5 id="modalProductPrice"></h5>
+                            <p class="card-text" id="modalProductDescription"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <div class="row my-3">
+                <% Object.values(products).forEach((items)=>{ %>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-content" data-toggle="modal" data-target="#productModal"
+                                data-name="<%= items.name %>" data-image="/images/products/<%= items.imagePath %>"
+                                data-price="<%= items.price %> THB" data-description="<%= items.description %>">
+                                <a href="#">
+                                    <img class="card-img-top" src="/images/products/<%= items.imagePath %>" />
+                                </a>
+                                <div class="card-body">
+                                    <h4 class="card-title">
+                                        <a href="#">
+                                            <%= items.name %>
+                                        </a>
+                                    </h4>
+                                    <h5>
+                                        <%= items.price %> THB.
+                                    </h5>
+                                    <p class="card-text">
+                                        <%= items.description %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+        </div>
+
+        <script>
+            // JavaScript to handle modal opening and content population
+            const cardContents = document.querySelectorAll('.card-content');
+
+            cardContents.forEach(cardContent => {
+                cardContent.addEventListener('click', () => {
+                    const name = cardContent.getAttribute('data-name');
+                    const imageSrc = cardContent.getAttribute('data-image');
+                    const price = cardContent.getAttribute('data-price');
+                    const description = cardContent.getAttribute('data-description');
+
+                    document.getElementById('productModalLabel').textContent = name;
+                    document.getElementById('modalImage').src = imageSrc;
+                    document.getElementById('modalProductName').textContent = name;
+                    document.getElementById('modalProductPrice').textContent = price;
+                    document.getElementById('modalProductDescription').textContent = description;
+
+                    $('#productModal').modal('show'); // Using jQuery to open the modal
+                });
+            });
+        </script>
+
+</body>
+
+</html>

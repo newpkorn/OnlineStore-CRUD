@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K-Shop</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <script src="/js/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="/js/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px dashed gray;
+            /* border-bottom: 1px solid #ddd; */
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even){background-color: #f2f2f2}
+
+        tr:hover {background-color: coral;}
+
+        th {
+            background-color: gray;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('navbar') %>
+        <div class="container">
+            <h2>Manage Users</h2>
+            <h6>Loged in by :
+                 <span>
+                     <font color="blue">
+                         <b>
+                             <%= loggedUser %>
+                         </b>
+                     </font>
+                 </span>
+                 |
+                 <a href="/manage/user">
+                     <font color="darkorange" size=2>
+                         Manage Users
+                     </font>
+                 </a>
+                |
+                <a href="/register">
+                    <font color="green" size=2>
+                        Register New Staffs
+                    </font>
+                </a>
+                |
+                <a href="/logout">
+                    <font color="red" size=2>
+                        Logout
+                    </font>
+                </a>
+            </h6>
+
+            <form action="/manage/user" method="GET" class="mb-4">
+                <div class="d-flex justify-content-between mb-4">
+                    <p>&nbsp &nbsp</p>
+                    <div class="input-group w-auto">
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Search"
+                          aria-label="Search"
+                          name="search"
+                        />
+                        <button class="btn btn-primary" type="submit" id="button-addon1" data-mdb-ripple-color="dark">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <% if(success != '') { %>
+                <p class="alert alert-success text-sm-center">
+                    <%= success %>
+                </p>
+            <% } %>
+
+            <table>
+                <thead class="tb-head">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email Address</th>
+                        <th>Username</th>
+                        <th>Register By</th>
+                        <th>Last Update</th>
+                        <th colspan="2" style="text-align: center;">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (users.length === 0) { %>
+                        <td colspan="7" class="text-center">User not found</td>
+                    <% } else { %>
+                        <% Object.values(users).forEach((user)=>{ %>
+                            <tr >
+                                <td>
+                                    <%= user.fullname %>
+                                </td>
+                                <td>
+                                    <%= user.email %>
+                                </td>
+                                <td>
+                                    <%= user.username %>
+                                </td>
+                                <td>
+                                    <%= user.registered_by %>
+                                </td>
+                                <td>
+                                    <%= user.updated_by %> <%= user.updated_at %>
+                                </td>
+                                <td><a class="btn btn-danger" href="/user/delete/<%= user._id %>"
+                                        onclick="return confirm('Do you want to delete user : <%= user.fullname %> ?')">ลบ</a>
+                                </td>
+                                <td>
+                                     <input type="hidden" name="user_id" value="<%= user._id %>">
+                                     <a class="btn btn-primary" href="/admin/manage/user/<%= user._id %>">แก้ไข</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+</body>
+
+</html>
