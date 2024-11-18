@@ -1,4 +1,3 @@
-// api/index.js
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
@@ -11,7 +10,6 @@ const mongoose = require('mongoose');
 const app = express();
 
 dotenv.config({ path: 'config.env' });
-const PORT = process.env.PORT || 3000;
 const conStr = process.env.MONGODB_URL;
 
 // MongoDB Connection
@@ -52,4 +50,5 @@ app.use(morgan('tiny'));
 
 app.use(route);
 
+// This will be the serverless function handler that Vercel expects
 module.exports = app;
