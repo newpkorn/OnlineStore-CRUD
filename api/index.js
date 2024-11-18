@@ -10,17 +10,13 @@ const mongoose = require('mongoose');
 const app = express();
 
 // โหลด environment variables
-dotenv.config({ path: 'config.env' });
-
-const conStr = process.env.MONGODB_URL;
+dotenv.config();
 
 // การเชื่อมต่อ MongoDB
-mongoose.connect(conStr, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Database connected successfully');
-}).catch(error => console.log('MongoDB Connection Error:', error));
+console.log('MongoDB URI:', process.env.MONGODB_URL);
+mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch((err) => console.log('MongoDB connection error:', err));
 
 global.loggedIn = null;
 global.loggedUser = null;
