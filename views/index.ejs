@@ -45,14 +45,20 @@
             </div>
         </div>
 
+
         <div class="container">
             <div class="row my-3">
                 <% Object.values(products).forEach((items)=>{ %>
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="card h-100">
-                            <div class="card-content" data-toggle="modal" data-target="#productModal"
-                                data-name="<%= items.name %>" data-image="/images/products/<%= items.imagePath %>"
-                                data-price="<%= items.price %> THB" data-description="<%= items.description %>">
+                            <div class="card-content" 
+                                data-toggle="modal" 
+                                data-target="#productModal"
+                                data-name="<%= items.name %>" 
+                                data-image="/images/products/<%= items.imagePath %>"
+                                data-price="<%= items.price %> THB" 
+                                data-description="<%= items.description %>"
+                            >
                                 <a href="#">
                                     <img class="card-img-top" src="/images/products/<%= items.imagePath %>" />
                                 </a>
@@ -86,6 +92,22 @@
                     const imageSrc = cardContent.getAttribute('data-image');
                     const price = cardContent.getAttribute('data-price');
                     const description = cardContent.getAttribute('data-description');
+
+                    document.getElementById('productModalLabel').textContent = name;
+                    document.getElementById('modalImage').src = imageSrc;
+                    document.getElementById('modalProductName').textContent = name;
+                    document.getElementById('modalProductPrice').textContent = price;
+                    document.getElementById('modalProductDescription').textContent = description;
+
+                    $('#productModal').modal('show'); // Using jQuery to open the modal
+                });
+            });
+        </script>
+
+</body>
+
+</html>
+
 
                     document.getElementById('productModalLabel').textContent = name;
                     document.getElementById('modalImage').src = imageSrc;

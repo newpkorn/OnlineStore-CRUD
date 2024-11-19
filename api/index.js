@@ -1,5 +1,5 @@
 const express = require('express');
-const dotenv = require('dotenv');
+require('dotenv').config(); 
 const morgan = require('morgan');
 const path = require('path');
 const route = require('../router/routers');
@@ -9,8 +9,6 @@ const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
 
 const app = express();
-
-dotenv.config();
 
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected successfully'))
@@ -44,6 +42,12 @@ app.use('*', (req, res, next) => {
     loggedUser = req.session.userName;
     next();
 });
+
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' https://fonts.googleapis.com; img-src 'self' https://res.cloudinary.com;");
+    next();
+});
+
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(flash());
