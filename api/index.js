@@ -6,6 +6,7 @@ const route = require('../router/routers');
 const session = require('express-session');
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
 
 const app = express();
 
@@ -26,9 +27,16 @@ app.use(express.urlencoded({
 }));
 
 app.use(session({
-    secret: process.env.SETSION_SECRET,
-    resave: true,
-    saveUninitialized: true
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URL,
+        collectionName: 'sessions'
+    }),
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000
+    }
 }));
 
 app.use('*', (req, res, next) => {
