@@ -429,7 +429,7 @@ const form_updateUser = (req, res) => {
         if (user) {
             res.render('form_updateUser', {
                 errors: req.flash('validationErrors'),
-                user: user
+                user
             });
         }else {
             req.session.destroy((error) => {
@@ -469,7 +469,7 @@ const form_manageUsers = (req, res) => {
         if (req.originalUrl.includes("/manage/user")) {
             // If accessed via search, render 'form_admin_manageUser'
             res.render('form_admin_manageUser', {
-                users: users,
+                users,
                 success: req.flash('validationSuccess')
             });
         } else if (req.originalUrl.includes("/admin/manage/user/" + user_id)) {
@@ -480,7 +480,7 @@ const form_manageUsers = (req, res) => {
                 if (user) {
                     res.render('form_admin_updateUser', {
                         errors: req.flash('validationErrors'),
-                        user: user
+                        user
                     });
                 }
             }).catch(error => console.log(error));
@@ -496,7 +496,7 @@ const form_admin_UpdateUser = (req, res) => {
         if (user) {
             res.render('form_admin_updateUser', {
                 errors: req.flash('validationErrors'),
-                user: user
+                user
             });
         }
     }).catch(error => console.log(error));
