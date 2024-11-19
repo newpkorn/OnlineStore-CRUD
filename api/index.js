@@ -26,7 +26,7 @@ app.use(express.urlencoded({
 }));
 
 app.use(session({
-    secret: process.env.SETSION_SECRET,
+    secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
 }));

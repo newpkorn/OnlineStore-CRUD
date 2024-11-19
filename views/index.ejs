@@ -50,11 +50,16 @@
                 <% Object.values(products).forEach((items)=>{ %>
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="card h-100">
-                            <div class="card-content" data-toggle="modal" data-target="#productModal"
-                                data-name="<%= items.name %>" data-image="/images/products/<%= items.imagePath %>"
-                                data-price="<%= items.price %> THB" data-description="<%= items.description %>">
+                            <div 
+                                class="card-content"
+                                data-toggle="modal" 
+                                data-target="#productModal"
+                                data-name="<%= items.name %>" 
+                                data-image="<%= items.imagePath %>"
+                                data-price="<%= items.price %> THB" 
+                                data-description="<%= items.description %>">
                                 <a href="#">
-                                    <img class="card-img-top" src="/images/products/<%= items.imagePath %>" />
+                                    <img class="card-img-top" src="<%= items.imagePath %>" />
                                 </a>
                                 <div class="card-body">
                                     <h4 class="card-title">
