@@ -16,7 +16,9 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
+        folder: 'online_store_products',
         format: async (req, file) => 'jpg',
+        public_id: async (req, file) => Date.now().toString(),
     }
 });
 
@@ -24,6 +26,7 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 // ================ CRUD =============== //
+
 let validationSuccess = '';
 
 // Insert Product
@@ -105,12 +108,20 @@ const updateProduct = async (req, res) => {
         const product = await Product.findById(product_id);
         const currentImagePath = product.imagePath;
 
+        console.log('find product ID: ', product_id);
+        console.log('currentImagePath: ', currentImagePath);
+
         let imageUrl = currentImagePath;
         if (image) {
             if (currentImagePath) {
                 const publicId = currentImagePath.split('/').pop().split('.')[0]; // Extract public ID from URL
-                await cloudinary.uploader.destroy(publicId); // Remove old image from Cloudinary
+                console.log('publicId: ', publicId);
+                await cloudinary.api.delete_resources('online_store_products/'+publicId, {
+                    type: 'upload',
+                    resource_type: 'image'
+                }).then(console.log).catch(console.error)
             }
+            
             imageUrl = image; // New image URL
         }
 
