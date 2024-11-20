@@ -1,5 +1,9 @@
 const express = require('express');
+<<<<<<< HEAD
 require('dotenv').config(); 
+=======
+require('dotenv').config();
+>>>>>>> manage-files-storage-to-cloud
 const morgan = require('morgan');
 const path = require('path');
 const route = require('../router/routers');
@@ -33,7 +37,11 @@ app.use(session({
         collectionName: 'sessions'
     }),
     cookie: {
+<<<<<<< HEAD
         maxAge: 24 * 60 * 60 * 1000
+=======
+        maxAge: 24 * 60 * 60 * 1000 // 1 day expiration
+>>>>>>> manage-files-storage-to-cloud
     }
 }));
 
