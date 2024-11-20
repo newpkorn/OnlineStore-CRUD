@@ -5,6 +5,7 @@ const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 // Configure Cloudinary with your credentials
 cloudinary.config({
@@ -20,6 +21,7 @@ const storage = new CloudinaryStorage({
         format: async (req, file) => 'jpg',
     }
 });
+
 
 const upload = multer({ storage: storage });
 
@@ -76,7 +78,7 @@ const insertProduct = async (req, res) => {
             name: req.body.name,
             price: req.body.price,
             description: req.body.details,
-            imagePath: imageUrl || null, // If no image, store null
+            imagePath: imageUrl || null,
             added_by: loggedUser + " at " + new Date()
         });
 
@@ -88,6 +90,7 @@ const insertProduct = async (req, res) => {
         return res.status(500).send('Error inserting product');
     }
 };
+
 
 // Update Product
 const updateProduct = async (req, res) => {
@@ -156,6 +159,7 @@ const deleteProdoctById = async (req, res) => {
             }
 
             await Product.findByIdAndDelete(product_id);
+
             req.flash('validationSuccess', `Product name: ${product.name} was deleted.`);
             return res.redirect('/manage/product');
         } else {
@@ -200,7 +204,6 @@ const mgrProducts = async (req, res) => {
 
     if (searchQuery) {
         const numericValue = parseFloat(searchQuery); // Check if searchQuery is a number
-
         searchFilter = numericValue ? {
             $or: [
                 { name: new RegExp(searchQuery, "i") },
