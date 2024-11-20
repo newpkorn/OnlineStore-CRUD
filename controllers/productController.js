@@ -1,11 +1,9 @@
 const Product = require("../models/Products");
 const User = require("../models/User");
 const mongoose = require('mongoose');
-const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const { v4: uuidv4 } = require('uuid');
 
 // Configure Cloudinary with your credentials
 cloudinary.config({
