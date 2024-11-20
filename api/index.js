@@ -51,6 +51,11 @@ app.use(morgan('tiny'));
 
 app.use(route);
 
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' https://fonts.googleapis.com");
+    next();
+});  
+
 if (process.env.VERCEL === 'true') {
     module.exports = (req, res) => {
         app(req, res);
