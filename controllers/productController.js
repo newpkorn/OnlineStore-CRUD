@@ -46,7 +46,7 @@ const insertProduct = async (req, res) => {
                     console.log(error);
                 });
             if (uploadResult.original_filename) {
-                await cloudinary.api.delete_resources(uploadResult.original_filename, {
+                await cloudinary.api.delete_resources('online_store_products/'+uploadResult.original_filename, {
                     type: 'upload',
                     resource_type: 'image'
                 })
