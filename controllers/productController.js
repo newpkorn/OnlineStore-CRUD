@@ -5,6 +5,7 @@ const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 // Configure Cloudinary with your credentials
 cloudinary.config({
@@ -17,42 +18,79 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'online_store_products',
         format: async (req, file) => 'jpg',
-        public_id: (req, file) => Date.now()
     }
 });
+
 
 const upload = multer({ storage: storage });
 
 // ================ CRUD =============== //
+let validationSuccess = '';
+
 // Insert Product
 const insertProduct = async (req, res) => {
     try {
         let imageUrl;
 
+        // Upload an image
         if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'online_store_products',
+            const uploadResult = await cloudinary.uploader
+                .upload(
+                    req.file.path, {
+                        folder: 'online_store_products',
+                        public_id: Date.now().toString(),
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            if (uploadResult.original_filename) {
+                await cloudinary.api.delete_resources(uploadResult.original_filename, {
+                    type: 'upload',
+                    resource_type: 'image'
+                })
+            }
+            
+            imageUrl = uploadResult.secure_url;
+
+            console.log('uploadResult: ' ,uploadResult);
+
+            // Optimize delivery by resizing and applying auto-format and auto-quality
+            const optimizeUrl = cloudinary.url(uploadResult.public_id, {
+                fetch_format: 'auto',
+                quality: 'auto'
             });
-            imageUrl = result.secure_url;
+
+            console.log('optimizeUrl: ', optimizeUrl);
+
+            // Transform the image: auto-crop to square aspect_ratio
+            const autoCropUrl = cloudinary.url(uploadResult.public_id, {
+                crop: 'auto',
+                gravity: 'auto',
+                width: 500,
+                height: 500,
+            });
+
+            console.log('autoCropUrl: ', autoCropUrl);
         }
 
         const doc = new Product({
             name: req.body.name,
             price: req.body.price,
             description: req.body.details,
-            imagePath: imageUrl || null, // If no image, store null
+            imagePath: imageUrl || null,
             added_by: loggedUser + " at " + new Date()
         });
 
         await doc.save();
+        req.flash('validationSuccess', `Product name ${req.body.name} was added successfully`);
         return res.redirect('/manage/product');
     } catch (error) {
         console.log(error);
         return res.status(500).send('Error inserting product');
     }
 };
+
 
 // Update Product
 const updateProduct = async (req, res) => {
@@ -101,7 +139,7 @@ const updateProduct = async (req, res) => {
 // Delete Product
 const deleteProdoctById = async (req, res) => {
     const product_id = req.params.id;
-    console.log('objectId', product_id);
+    console.log('product_id', product_id);
 
     try {
         const product = await Product.findById(product_id);
@@ -109,13 +147,18 @@ const deleteProdoctById = async (req, res) => {
 
         if (product) {
             const imagePath = product.imagePath;
+            console.log('imagePath: ', imagePath);
+
             if (imagePath) {
                 const publicId = imagePath.split('/').pop().split('.')[0]; // Extract public ID
-                await cloudinary.uploader.destroy(publicId); // Delete from Cloudinary
+                console.log('publicId:', publicId);
+                await cloudinary.api.delete_resources('online_store_products/' + publicId, {
+                    type: 'upload',
+                    resource_type: 'image'
+                }).then(console.log);
             }
 
-            // Use deleteOne or findByIdAndDelete instead of remove
-            await product.deleteOne(); // or await Product.findByIdAndDelete(product_id);
+            await Product.findByIdAndDelete(product_id);
 
             req.flash('validationSuccess', `Product name: ${product.name} was deleted.`);
             return res.redirect('/manage/product');
@@ -178,8 +221,6 @@ const mgrProducts = async (req, res) => {
     try {
         const user = await User.findById(loggedIn).exec();
         const products = await Product.find(searchFilter).sort({ name: 1 }).exec();
-
-        console.log('products: ', products);
 
         res.render('manageProducts', {
             products,

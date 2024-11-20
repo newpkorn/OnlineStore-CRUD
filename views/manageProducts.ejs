@@ -153,13 +153,9 @@
                                     </tr>
                                     <% } else { %>
                                         <% Object.values(products).forEach((items)=> { %>
-                                            <tr
-                                                class="clickable-row"
-                                                data-name="<%= items.name %>"
-                                                data-image="<%= items.imagePath %>" 
-                                                data-price="<%= items.price %> THB"
-                                                data-description="<%= items.description %>"
-                                            >
+                                            <tr class="clickable-row" data-name="<%= items.name %>"
+                                                data-image="<%= items.imagePath %>" data-price="<%= items.price %> THB"
+                                                data-description="<%= items.description %>">
                                                 <td width="15%">
                                                     <%= items.name %>
                                                 </td>
