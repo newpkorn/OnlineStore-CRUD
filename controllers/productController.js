@@ -5,30 +5,14 @@ const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-<<<<<<< HEAD
-
-=======
-const { v4: uuidv4 } = require('uuid');
 
 // Configure Cloudinary with your credentials
->>>>>>> manage-files-storage-to-cloud
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-<<<<<<< HEAD
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'online_store_products',
-        format: async (req, file) => 'jpg',
-        public_id: (req, file) => Date.now()
-    }
-});
-
-=======
 // Create disk storage for uploading images.
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
@@ -37,8 +21,6 @@ const storage = new CloudinaryStorage({
     }
 });
 
-
->>>>>>> manage-files-storage-to-cloud
 const upload = multer({ storage: storage });
 
 // ================ CRUD =============== //
@@ -49,15 +31,6 @@ const insertProduct = async (req, res) => {
     try {
         let imageUrl;
 
-<<<<<<< HEAD
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'online_store_products',
-            });
-            imageUrl = result.secure_url;
-        }
-
-=======
         // Upload an image
         if (req.file) {
             const uploadResult = await cloudinary.uploader
@@ -99,34 +72,22 @@ const insertProduct = async (req, res) => {
             console.log('autoCropUrl: ', autoCropUrl);
         }
 
->>>>>>> manage-files-storage-to-cloud
         const doc = new Product({
             name: req.body.name,
             price: req.body.price,
             description: req.body.details,
-<<<<<<< HEAD
             imagePath: imageUrl || null, // If no image, store null
-=======
-            imagePath: imageUrl || null,
->>>>>>> manage-files-storage-to-cloud
             added_by: loggedUser + " at " + new Date()
         });
 
         await doc.save();
-<<<<<<< HEAD
-=======
         req.flash('validationSuccess', `Product name ${req.body.name} was added successfully`);
->>>>>>> manage-files-storage-to-cloud
         return res.redirect('/manage/product');
     } catch (error) {
         console.log(error);
         return res.status(500).send('Error inserting product');
     }
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> manage-files-storage-to-cloud
 
 // Update Product
 const updateProduct = async (req, res) => {
@@ -175,11 +136,7 @@ const updateProduct = async (req, res) => {
 // Delete Product
 const deleteProdoctById = async (req, res) => {
     const product_id = req.params.id;
-<<<<<<< HEAD
-    console.log('objectId', product_id);
-=======
     console.log('product_id', product_id);
->>>>>>> manage-files-storage-to-cloud
 
     try {
         const product = await Product.findById(product_id);
@@ -187,15 +144,6 @@ const deleteProdoctById = async (req, res) => {
 
         if (product) {
             const imagePath = product.imagePath;
-<<<<<<< HEAD
-            if (imagePath) {
-                const publicId = imagePath.split('/').pop().split('.')[0]; // Extract public ID
-                await cloudinary.uploader.destroy(publicId); // Delete from Cloudinary
-            }
-
-            // Use deleteOne or findByIdAndDelete instead of remove
-            await product.deleteOne();  // or await Product.findByIdAndDelete(product_id);
-=======
             console.log('imagePath: ', imagePath);
 
             if (imagePath) {
@@ -208,8 +156,6 @@ const deleteProdoctById = async (req, res) => {
             }
 
             await Product.findByIdAndDelete(product_id);
->>>>>>> manage-files-storage-to-cloud
-
             req.flash('validationSuccess', `Product name: ${product.name} was deleted.`);
             return res.redirect('/manage/product');
         } else {
@@ -254,11 +200,8 @@ const mgrProducts = async (req, res) => {
 
     if (searchQuery) {
         const numericValue = parseFloat(searchQuery); // Check if searchQuery is a number
-<<<<<<< HEAD
-        searchFilter = numericValue ? { 
-=======
+
         searchFilter = numericValue ? {
->>>>>>> manage-files-storage-to-cloud
             $or: [
                 { name: new RegExp(searchQuery, "i") },
                 { description: new RegExp(searchQuery, "i") },
@@ -276,11 +219,6 @@ const mgrProducts = async (req, res) => {
         const user = await User.findById(loggedIn).exec();
         const products = await Product.find(searchFilter).sort({ name: 1 }).exec();
 
-<<<<<<< HEAD
-        console.log('products: ', products);
-
-=======
->>>>>>> manage-files-storage-to-cloud
         res.render('manageProducts', {
             products,
             user,

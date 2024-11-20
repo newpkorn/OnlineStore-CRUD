@@ -9,24 +9,6 @@ const authMiddleware = require('../middleware/authMiddleware');
 const productController = require('../controllers/productController');
 const userController = require('../controllers/userController')
 
-<<<<<<< HEAD
-// Create disk storage for uploading images.
-// const storage = multer.diskStorage({
-//     destination: function(req, file, cb) {
-//         cb(null, './public/images/products');
-//     },
-//     filename: function(req, file, cb) {
-//         cb(null, Date.now()+".jpg");
-//     }
-// })
-
-// // Upload function.
-// const upload = multer({
-//     storage: storage
-// });
-
-=======
->>>>>>> manage-files-storage-to-cloud
 // Routes.
 router.get('/', productController.getAllProducts);
 router.get('/product/:id', productController.getProductById);

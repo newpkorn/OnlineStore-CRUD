@@ -1,9 +1,5 @@
 const express = require('express');
-<<<<<<< HEAD
-require('dotenv').config(); 
-=======
 require('dotenv').config();
->>>>>>> manage-files-storage-to-cloud
 const morgan = require('morgan');
 const path = require('path');
 const route = require('../router/routers');
@@ -37,22 +33,13 @@ app.use(session({
         collectionName: 'sessions'
     }),
     cookie: {
-<<<<<<< HEAD
-        maxAge: 24 * 60 * 60 * 1000
-=======
         maxAge: 24 * 60 * 60 * 1000 // 1 day expiration
->>>>>>> manage-files-storage-to-cloud
     }
 }));
 
 app.use('*', (req, res, next) => {
     loggedIn = req.session.userId;
     loggedUser = req.session.userName;
-    next();
-});
-
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' https://fonts.googleapis.com; img-src 'self' https://res.cloudinary.com;");
     next();
 });
 
