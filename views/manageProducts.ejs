@@ -18,185 +18,200 @@
     <link rel="stylesheet" href="/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
 
-        <style>
-            table {
-                border-collapse: collapse;
-                width: 100%;
-            }
-    
-            th, td {
-                border: 1px dashed gray;
-                /* border-bottom: 1px solid #ddd; */
-                text-align: left;
-                padding: 8px;
-            }
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
 
-            th {
-                position: sticky;
-                top: 0;
-            }
-    
-            tr:nth-child(even){background-color: #f2f2f2}
-    
-            tr:hover {background-color: coral;}
-    
-            th {
-                background-color: gray;
-                color: white;
-            }
-        </style>
+        th,
+        td {
+            border: 1px dashed gray;
+            /* border-bottom: 1px solid #ddd; */
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2
+        }
+
+        tr:hover {
+            background-color: coral;
+        }
+
+        th {
+            background-color: gray;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
     <%- include('navbar') %>
 
-    <!-- Modal -->
-    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productModalLabel"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img class="card-img-top img-fluid mb-4" id="modalImage" />
-                    <div class="m-auto">
-                        <h4 id="modalProductName"></h4>
-                        <h5 id="modalProductPrice"></h5>
-                        <p class="card-text" id="modalProductDescription"></p>
+        <!-- Modal -->
+        <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalLabel"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img class="card-img-top img-fluid mb-4" id="modalImage" />
+                        <div class="m-auto">
+                            <h4 id="modalProductName"></h4>
+                            <h5 id="modalProductPrice"></h5>
+                            <p class="card-text" id="modalProductDescription"></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <div class="container">
-        <h2>Manage Products</h2>
-        <h6>Loged in by :
-            <% if (loggedIn === '64d521573eb8e5d90b65a33b') { %>
-                <span>
-                    <font color="blue">
-                        <b>
-                            <%= user.fullname %>
-                        </b>
-                    </font>
-                </span>
-                |
-                <a href="/manage/user">
-                    <font color="darkorange" size=2>
-                        Manage Users
-                    </font>
-                </a>
-                |
-                <a href="/register">
-                    <font color="green" size=2>
-                        Register New Staffs
-                    </font>
-                </a>
-            <% }else { %> 
-                |
-                <a href="/user/update">
-                    <font color="blue">
-                        <b>
-                            <%= user.fullname %>
-                        </b>
-                    </font>
-                </a>
-            <% } %>
-            |
-            <a href="/logout">
-                <font color="red" size=2>
-                    Logout
-                </font>
-            </a>
-        </h6>
-        <form action="/manage/product" method="GET" class="mb-4">
-            <div class="d-flex justify-content-between mb-4">
-                <p>&nbsp &nbsp</p>
-                <div class="input-group w-auto">
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Search"
-                      aria-label="Search"
-                      name="search"
-                    />
-                    <button class="btn btn-primary" type="submit" id="button-addon1" data-mdb-ripple-color="dark">
-                        Search
-                    </button>
-                </div>
-            </div>
-            <% if(success !== null && success.length > 0) { %>
-                <p class="alert alert-success text-sm-center">
-                <%= success %>
-                </p>
-            <% } %>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Detail</th>
-                        <th>Added By</th>
-                        <th>Last Update</th>
-                        <th>Image</th>
-                        <th colspan="2">Manade</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (product.length === 0) { %>
-                        <tr>
-                            <td colspan="7" class="text-center">Product not found</td>
-                        </tr>
-                    <% } else { %>
-                        <% Object.values(product).forEach((items) => { %>
-                            <tr class="clickable-row"
-                                data-name="<%= items.name %>"
-                                data-image="/images/products/<%= items.imagePath %>"
-                                data-price="<%= items.price %> THB"
-                                data-description="<%= items.description %>">
-                                <td width="15%"><%= items.name %></td>
-                                <td><%= items.price %></td>
-                                <td><%= items.description %></td>
-                                <td><%= items.added_by %></td>
-                                <td><%= items.updated_by %></td>
-                                <td><img src="/images/products/<%= items.imagePath %>" width="100px" height="100px"></td>
-                                <td>
-                                    <a class="btn btn-danger" href="/delete/<%= items._id %>"
-                                        onclick="return confirm('Do you want to delete item : <%= items.name %>-<%= items.description %>')">Delete</a>
-                                </td>
-                                <td>
-                                    <a class="btn btn-primary" href="/updateProduct/<%= items._id %>">Edit</a>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    <% } %>
-                </tbody>
-            </table>
-        </form>
-        <script>
-            const clickableRows = document.querySelectorAll('.clickable-row');
-        
-            clickableRows.forEach(row => {
-                row.addEventListener('click', () => {
-                    const name = row.getAttribute('data-name');
-                    const imageSrc = row.getAttribute('data-image');
-                    const price = row.getAttribute('data-price');
-                    const description = row.getAttribute('data-description');
-        
-                    document.getElementById('productModalLabel').textContent = name;
-                    document.getElementById('modalImage').src = imageSrc;
-                    document.getElementById('modalProductName').textContent = name;
-                    document.getElementById('modalProductPrice').textContent = price;
-                    document.getElementById('modalProductDescription').textContent = description;
-        
-                    $('#productModal').modal('show');
-                });
-            });
-        </script>
 
-    </div>
+        <div class="container">
+            <h2>Manage Products</h2>
+            <h6>Loged in by :
+                <% if (loggedIn==='64d521573eb8e5d90b65a33b' ) { %>
+                    <span>
+                        <font color="blue">
+                            <b>
+                                <%= user.fullname %>
+                            </b>
+                        </font>
+                    </span>
+                    |
+                    <a href="/manage/user">
+                        <font color="darkorange" size=2>
+                            Manage Users
+                        </font>
+                    </a>
+                    |
+                    <a href="/register">
+                        <font color="green" size=2>
+                            Register New Staffs
+                        </font>
+                    </a>
+                    <% }else { %>
+                        |
+                        <a href="/user/update">
+                            <font color="blue">
+                                <b>
+                                    <%= user.fullname %>
+                                </b>
+                            </font>
+                        </a>
+                        <% } %>
+                            |
+                            <a href="/logout">
+                                <font color="red" size=2>
+                                    Logout
+                                </font>
+                            </a>
+            </h6>
+            <form action="/manage/product" method="GET" class="mb-4">
+                <div class="d-flex justify-content-between mb-4">
+                    <p>&nbsp &nbsp</p>
+                    <div class="input-group w-auto">
+                        <input type="text" class="form-control" placeholder="Search" aria-label="Search"
+                            name="search" />
+                        <button class="btn btn-primary" type="submit" id="button-addon1" data-mdb-ripple-color="dark">
+                            Search
+                        </button>
+                    </div>
+                </div>
+                <% if(success !==null && success.length> 0) { %>
+                    <p class="alert alert-success text-sm-center">
+                        <%= success %>
+                    </p>
+                    <% } %>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Detail</th>
+                                    <th>Added By</th>
+                                    <th>Last Update</th>
+                                    <th>Image</th>
+                                    <th colspan="2">Manade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (products.length===0) { %>
+                                    <tr>
+                                        <td colspan="7" class="text-center">Product not found</td>
+                                    </tr>
+                                    <% } else { %>
+                                        <% Object.values(products).forEach((items)=> { %>
+                                            <tr
+                                                class="clickable-row"
+                                                data-name="<%= items.name %>"
+                                                data-image="<%= items.imagePath %>" 
+                                                data-price="<%= items.price %> THB"
+                                                data-description="<%= items.description %>"
+                                            >
+                                                <td width="15%">
+                                                    <%= items.name %>
+                                                </td>
+                                                <td>
+                                                    <%= items.price %>
+                                                </td>
+                                                <td>
+                                                    <%= items.description %>
+                                                </td>
+                                                <td>
+                                                    <%= items.added_by %>
+                                                </td>
+                                                <td>
+                                                    <%= items.updated_by %>
+                                                </td>
+                                                <td><img src="<%= items.imagePath %>" width="100px" height="100px"></td>
+                                                <td>
+                                                    <a class="btn btn-danger" href="/delete/<%= items._id %>"
+                                                        onclick="return confirm('Do you want to delete item : <%= items.name %>-<%= items.description %>')">Delete</a>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-primary"
+                                                        href="/updateProduct/<%= items._id %>">Edit</a>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                                <% } %>
+                            </tbody>
+                        </table>
+            </form>
+            <script>
+                const clickableRows = document.querySelectorAll('.clickable-row');
+
+                clickableRows.forEach(row => {
+                    row.addEventListener('click', () => {
+                        const name = row.getAttribute('data-name');
+                        const imageSrc = row.getAttribute('data-image');
+                        const price = row.getAttribute('data-price');
+                        const description = row.getAttribute('data-description');
+
+                        document.getElementById('productModalLabel').textContent = name;
+                        document.getElementById('modalImage').src = imageSrc;
+                        document.getElementById('modalProductName').textContent = name;
+                        document.getElementById('modalProductPrice').textContent = price;
+                        document.getElementById('modalProductDescription').textContent = description;
+
+                        $('#productModal').modal('show');
+                    });
+                });
+            </script>
+
+        </div>
 </body>
+
 </html>

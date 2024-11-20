@@ -2,73 +2,87 @@ const Product = require("../models/Products");
 const User = require("../models/User");
 const mongoose = require('mongoose');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer = require('multer');
 
+// Configure Cloudinary with your credentials
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Create disk storage for uploading images.
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'online_store_products',
+        format: async (req, file) => 'jpg',
+        public_id: (req, file) => Date.now()
+    }
+});
+
+const upload = multer({ storage: storage });
 
 // ================ CRUD =============== //
 // Insert Product
-const insertProduct = (req, res) => {
+const insertProduct = async (req, res) => {
+    try {
+        let imageUrl;
 
-    const doc = new Product({
-        name: req.body.name,
-        price: req.body.price,
-        description: req.body.details,
-        imagePath: req.file.filename,
-        added_by: loggedUser + " at " + new Date()
-    });
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'online_store_products',
+            });
+            imageUrl = result.secure_url;
+        }
 
-    doc.save().then(() => {
-        return res.redirect('/manage/product')
-    }).catch((error) => {
+        const doc = new Product({
+            name: req.body.name,
+            price: req.body.price,
+            description: req.body.details,
+            imagePath: imageUrl || null, // If no image, store null
+            added_by: loggedUser + " at " + new Date()
+        });
+
+        await doc.save();
+        return res.redirect('/manage/product');
+    } catch (error) {
         console.log(error);
-    });
-
-}
+        return res.status(500).send('Error inserting product');
+    }
+};
 
 // Update Product
 const updateProduct = async (req, res) => {
     const { product_id, name, price, details } = req.body;
-    const image = req.file; // Get the uploaded image file
-    let validationSuccess = '';
+    const image = req.file ? req.file.path : undefined; // Use path of Cloudinary image
 
     if (!mongoose.Types.ObjectId.isValid(product_id)) {
         console.log('Invalid product ID');
         return res.redirect('/manage/product');
     }
 
-    // Step 1: Retrieve the old image path from the database
-    const product = await Product.findById(product_id);
-    const currentImagePath = product.imagePath;
-
-    console.log('Current image name : ' + currentImagePath);
-
     try {
-        // Step 2: Delete the old image
-        if ( image !== undefined ) {
-            console.log(image);
+        // Retrieve the product and handle the image removal in Cloudinary only if needed
+        const product = await Product.findById(product_id);
+        const currentImagePath = product.imagePath;
 
+        let imageUrl = currentImagePath;
+        if (image) {
             if (currentImagePath) {
-                try {
-                    await fs.promises.unlink('./public/images/products/' +currentImagePath);
-                    console.log(`Old image name: "${currentImagePath}" was deleted successfully`);
-                } catch (error) {
-                    console.error('Error deleting old image:', error);
-                }
+                const publicId = currentImagePath.split('/').pop().split('.')[0]; // Extract public ID from URL
+                await cloudinary.uploader.destroy(publicId); // Remove old image from Cloudinary
             }
-            console.log(`New image name: "${image.filename}" is preparing to update ...`);
+            imageUrl = image; // New image URL
         }
-        
-        const updatedProduct = await Product.findByIdAndUpdate(
-            product_id,
-            {
-                name: name,
-                price: price,
-                description: details,
-                imagePath: image ? image.filename : undefined, // Update the image field if an image is uploaded
-                updated_by: loggedUser + " at " + new Date(),
-                updated_at: new Date()
-            },
-            { new: true }
-        );
+
+        const updatedProduct = await Product.findByIdAndUpdate(product_id, {
+            name, price, description: details, imagePath: imageUrl,
+            updated_by: loggedUser + " at " + new Date(),
+            updated_at: new Date()
+        }, { new: true });
 
         if (!updatedProduct) {
             console.log('Product not found');
@@ -76,125 +90,126 @@ const updateProduct = async (req, res) => {
         }
 
         console.log('Product updated successfully');
-        console.log(updatedProduct);
-
-        validationSuccess = `Product name ${name} was updated successfully`;
-        req.flash('validationSuccess', validationSuccess);
+        req.flash('validationSuccess', `Product name ${name} was updated successfully`);
         return res.redirect('/manage/product');
     } catch (error) {
         console.log('Error updating product:', error);
         return res.redirect('/manage/product');
     }
-}
+};
 
 // Delete Product
 const deleteProdoctById = async (req, res) => {
     const product_id = req.params.id;
-    let validationSuccess = '';
+    console.log('objectId', product_id);
+
     try {
         const product = await Product.findById(product_id);
+        console.log('found product: ', product);
+
         if (product) {
-            const imagePath = product.imagePath; // Get the image path from the product
+            const imagePath = product.imagePath;
             if (imagePath) {
-                // Delete the image file from the filesystem
-                fs.unlinkSync('./public/images/products/' + imagePath);
+                const publicId = imagePath.split('/').pop().split('.')[0]; // Extract public ID
+                await cloudinary.uploader.destroy(publicId); // Delete from Cloudinary
             }
 
-            await Product.findByIdAndDelete(product_id, { useFindAndModifiy: false });
-            validationSuccess = `Product name : ${product.name} was deleted.`;
-            req.flash('validationSuccess', validationSuccess);
+            // Use deleteOne or findByIdAndDelete instead of remove
+            await product.deleteOne(); // or await Product.findByIdAndDelete(product_id);
+
+            req.flash('validationSuccess', `Product name: ${product.name} was deleted.`);
             return res.redirect('/manage/product');
+        } else {
+            return res.status(404).send('Product not found');
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send('Error deleting product');
+    }
+};
+
+// ================ Rendering Forms =============== //
+// Index
+const getAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find().exec();
+        res.render('index', { products });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// View product
+const getProductById = async (req, res) => {
+    const product_id = req.params.id;
+    try {
+        const product = await Product.findById(product_id).exec();
+        if (product) {
+            res.render('viewProductItem', { product });
+        } else {
+            return res.status(404).send('Product not found');
         }
     } catch (error) {
         console.log(error);
     }
 };
 
-// ================ Rendering Forms =============== //
-// Index
-const getAllProducts = (req, res) => {
-    Product.find().then((products) => {
-        res.render('index', ({
-            products: products
-        }));
-    }).catch((error => {
-        console.log(error);
-    }));
-}
-
-// View product
-const getProductById = (req, res) => {
-    const product_id = req.params.id;
-
-    Product.findOne({_id: product_id}).then((product) => {
-        if (product) {
-            res.render('viewProductItem', ({
-                product: product
-            }));
-        }
-    }).catch((error) => {
-        console.log(error);
-    });
-}
-
 // Manage Products
-const mgrProducts = (req, res) => {
+const mgrProducts = async (req, res) => {
     const searchQuery = req.query.search;
     let searchFilter = {};
 
     if (searchQuery) {
-        const numericValue = parseFloat(searchQuery); // Try to convert searchQuery to a number
+        const numericValue = parseFloat(searchQuery); // Check if searchQuery is a number
+        searchFilter = numericValue ? {
+            $or: [
+                { name: new RegExp(searchQuery, "i") },
+                { description: new RegExp(searchQuery, "i") },
+                { price: numericValue }
+            ]
+        } : {
+            $or: [
+                { name: new RegExp(searchQuery, "i") },
+                { description: new RegExp(searchQuery, "i") }
+            ]
+        };
+    }
 
-        if (!isNaN(numericValue)) {
-            // If searchQuery can be converted to a number, use numerical filtering for price
-            searchFilter = {
-                $or: [
-                    { name: new RegExp(searchQuery, "i") },
-                    { description: new RegExp(searchQuery, "i") },
-                    { price: numericValue } // Use the numeric value for filtering price
-                ]
-            };
-        } else {
-            // If searchQuery cannot be converted to a number, use textual search
-            searchFilter = {
-                $or: [
-                    { name: new RegExp(searchQuery, "i") },
-                    { description: new RegExp(searchQuery, "i") }
-                ]
-            };
-        }
-     };
-    
-    User.findById(loggedIn).then((user) => {
-        Product.find(searchFilter).sort({ name: 1 }).then((product) => {
-            res.render('manageProducts', ({
-                product: product,
-                user: user,
-                success: req.flash('validationSuccess')
-            }));
-        }).catch((error) => {
-            console.log(error);
+    try {
+        const user = await User.findById(loggedIn).exec();
+        const products = await Product.find(searchFilter).sort({ name: 1 }).exec();
+
+        console.log('products: ', products);
+
+        res.render('manageProducts', {
+            products,
+            user,
+            success: req.flash('validationSuccess')
         });
-    }).catch(error => console.log(error));
-}
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 // Form insert product
 const form_addProduct = (req, res) => {
     res.render('form_addProduct');
-}
+};
 
 // Form update product
-const form_updateProduct = (req, res) => {
+const form_updateProduct = async (req, res) => {
     const product_id = req.params.id;
-    Product.findOne({_id: product_id}).then((product) => {
-        if(product) {
-            res.render('form_updateProduct',{product: product})
+    try {
+        const product = await Product.findById(product_id).exec();
+        if (product) {
+            res.render('form_updateProduct', { product });
+        } else {
+            return res.status(404).send('Product not found');
         }
-    }).catch((error) => {
+    } catch (error) {
         console.log(error);
-    })
-}
-
+    }
+};
 
 module.exports = {
     getAllProducts,
@@ -204,6 +219,6 @@ module.exports = {
     form_updateProduct,
     deleteProdoctById,
     insertProduct,
-    updateProduct
-
-}
+    updateProduct,
+    upload,
+};

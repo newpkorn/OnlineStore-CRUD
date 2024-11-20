@@ -1,15 +1,14 @@
 const express = require('express');
-const dotenv = require('dotenv');
+require('dotenv').config();
 const morgan = require('morgan');
 const path = require('path');
 const route = require('../router/routers');
 const session = require('express-session');
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
 
 const app = express();
-
-dotenv.config();
 
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected successfully'))
@@ -27,8 +26,15 @@ app.use(express.urlencoded({
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URL,
+        collectionName: 'sessions'
+    }),
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000 // 1 day expiration
+    }
 }));
 
 app.use('*', (req, res, next) => {
