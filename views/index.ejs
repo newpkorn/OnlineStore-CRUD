@@ -45,19 +45,20 @@
             </div>
         </div>
 
+
         <div class="container">
             <div class="row my-3">
                 <% Object.values(products).forEach((items)=>{ %>
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="card h-100">
-                            <div 
-                                class="card-content"
+                            <div class="card-content" 
                                 data-toggle="modal" 
                                 data-target="#productModal"
                                 data-name="<%= items.name %>" 
                                 data-image="<%= items.imagePath %>"
                                 data-price="<%= items.price %> THB" 
-                                data-description="<%= items.description %>">
+                                data-description="<%= items.description %>"
+                            >
                                 <a href="#">
                                     <img class="card-img-top" src="<%= items.imagePath %>" />
                                 </a>
@@ -81,7 +82,7 @@
             </div>
         </div>
 
-        <script>
+        <script src="js/modal-handlers.js"></script>
             // JavaScript to handle modal opening and content population
             const cardContents = document.querySelectorAll('.card-content');
 
@@ -101,8 +102,7 @@
                     $('#productModal').modal('show'); // Using jQuery to open the modal
                 });
             });
-        </script>
+        </script> -->
 
 </body>
-
 </html>
