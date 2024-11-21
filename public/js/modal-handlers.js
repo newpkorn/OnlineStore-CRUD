@@ -1,4 +1,19 @@
 // modal-handlers.js
+
+let scrollPosition = 0;
+
+$('#productModal').on('show.bs.modal', function () {
+    scrollPosition = $(window).scrollTop();
+});
+
+$('#productModal').on('hidden.bs.modal', function () {
+    $(window).scrollTop(scrollPosition);
+});
+
+$('#productModal').modal({
+    focus: false
+});
+
 const cardContents = document.querySelectorAll('.card-content');
 
 cardContents.forEach(cardContent => {

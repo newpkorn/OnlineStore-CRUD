@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>K-Shop</title>
+    <link rel="icon" type="image/x-icon" href="/images/home/icons.png">
+    <title>Online Store</title>
     <link rel="stylesheet" href="css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
     <script src="js/jquery-3.4.1.slim.min.js"
@@ -25,7 +26,7 @@
         <!-- Modal -->
         <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="productModalLabel"></h5>
@@ -51,14 +52,9 @@
                 <% Object.values(products).forEach((items)=>{ %>
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="card h-100">
-                            <div class="card-content" 
-                                data-toggle="modal" 
-                                data-target="#productModal"
-                                data-name="<%= items.name %>" 
-                                data-image="<%= items.imagePath %>"
-                                data-price="<%= items.price %> THB" 
-                                data-description="<%= items.description %>"
-                            >
+                            <div class="card-content" data-toggle="modal" data-target="#productModal"
+                                data-name="<%= items.name %>" data-image="<%= items.imagePath %>"
+                                data-price="<%= items.price %> THB" data-description="<%= items.description %>">
                                 <a href="#">
                                     <img class="card-img-top" src="<%= items.imagePath %>" />
                                 </a>
@@ -84,4 +80,5 @@
 
         <script src="js/modal-handlers.js"></script>
 </body>
+
 </html>
