@@ -18,6 +18,11 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please provide password']
     },
+    role: {
+        type: String,
+        default: 'user',
+        required: [true, 'Please select role']
+    },
     registered_by: {
         type: String,
         default: ''

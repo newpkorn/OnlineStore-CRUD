@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
 }
 
 const authByAdmin = (req, res, next) => {
-    if (loggedIn !== '64d521573eb8e5d90b65a33b') {
+    if (userRole !== 'admin') {
         return res.redirect('/manage/product');
     }
     console.log('logged in by admin');

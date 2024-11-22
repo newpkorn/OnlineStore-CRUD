@@ -16,6 +16,7 @@ mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTop
 
 global.loggedIn = null;
 global.loggedUser = null;
+global.userRole = null;
 
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'ejs');
@@ -38,10 +39,17 @@ app.use(session({
 }));
 
 app.use('*', (req, res, next) => {
-    loggedIn = req.session.userId;
+    loggedIn = req.session.user;
     loggedUser = req.session.userName;
+    userRole = req.session.userRole;
     next();
 });
+
+app.use(express.static(path.join(__dirname, '../public')));
+app.use(flash());
+
+// log requests
+app.use(morgan('tiny'));
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(flash());

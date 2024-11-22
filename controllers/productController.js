@@ -253,6 +253,7 @@ const mgrProducts = async (req, res) => {
         res.render('manageProducts', {
             products,
             loggedUser,
+            userRole,
             success: req.flash('validationSuccess')
         });
     } catch (error) {
