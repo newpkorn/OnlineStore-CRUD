@@ -39,7 +39,7 @@ app.use(session({
 }));
 
 app.use('*', (req, res, next) => {
-    loggedIn = req.session.user;
+    loggedIn = req.session.userId;
     loggedUser = req.session.userName;
     userRole = req.session.userRole;
     next();
