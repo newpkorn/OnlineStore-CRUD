@@ -21,22 +21,11 @@
                 <div class="col-lg-2"></div>
                 <div class="col-lg-8">
                     <div class="card mt-4">
-                        <img class="card-img-top img-fluid" src="/images/products/<%= product.imagePath %>" />
+                        <img class="card-img-top img-fluid" src="<%= product.imagePath %>" />
                         <div class="card-body">
                             <h3 class="card-title"><%= product.name %></h3>
                             <h4><%= product.price %></h4>
                             <p class="card-text"><%= product.description %></p>
-
-                            <h3 class="card-title">
-                                <%= product.name %>
-                            </h3>
-                            <h4>
-                                <%= product.price %>
-                            </h4>
-                            <p class="card-text">
-                                <%= product.description %>
-                            </p>
-
                         </div>
                     </div>
                 </div>
