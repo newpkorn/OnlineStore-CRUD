@@ -1,16 +1,13 @@
 const express = require('express');
 const router = express.Router();
-<<<<<<< HEAD
-const multer = require('multer');
-=======
->>>>>>> 85971e9 (refactor product controller)
 
 // Middleware.
 const authMiddleware = require('../middleware/authMiddleware');
 
-//  Controllers.
+// Controllers.
 const productController = require('../controllers/productController');
 const userController = require('../controllers/userController')
+const userController = require('../controllers/userController');
 
 // Routes.
 router.get('/', productController.getAllProducts);
@@ -19,11 +16,9 @@ router.get('/manage/product', authMiddleware.authMiddleware, productController.m
 router.get('/addProduct', authMiddleware.authMiddleware, productController.form_addProduct);
 router.get('/delete/:id', productController.deleteProdoctById);
 router.get('/updateProduct/:id', productController.form_updateProduct);
-<<<<<<< HEAD
-=======
 router.post('/insert', productController.upload.single('image'), productController.insertProduct);
 router.post('/updateProduct', productController.upload.single('image'), productController.updateProduct);
->>>>>>> 85971e9 (refactor product controller)
+
 
 router.get('/login', authMiddleware.redirectIfAuth, userController.form_login);
 router.get('/register', authMiddleware.authByAdmin, userController.form_register);
@@ -31,15 +26,9 @@ router.get('/logout', userController.logout);
 router.get('/user/update', userController.form_updateUser);
 
 router.get('/manage/user', authMiddleware.authByAdmin, userController.form_manageUsers);
-router.get('/admin/manage/user/:id',authMiddleware.authByAdmin, userController.form_admin_UpdateUser);
+router.get('/admin/manage/user/:id', authMiddleware.authByAdmin, userController.form_admin_UpdateUser);
 router.get('/user/delete/:id', userController.deleteUser);
 
-<<<<<<< HEAD
-router.post('/insert', productController.upload.single('image'), productController.insertProduct);
-router.post('/updateProduct', productController.upload.single('image'), productController.updateProduct);
-=======
-
->>>>>>> 85971e9 (refactor product controller)
 
 router.post('/user/register', userController.storeUser);
 router.post('/user/login', userController.user_login);
@@ -47,5 +36,7 @@ router.post('/user/update', userController.updateUser);
 
 router.post('/admin/user/update', userController.admin_userUpdate);
 
+// Added test route
+router.get('/products', (req, res) => res.send('Test route'));
 
 module.exports = router;
