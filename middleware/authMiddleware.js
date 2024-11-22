@@ -1,32 +1,33 @@
 const User = require("../models/User");
 
-
-const authMiddleware = (req, res, next) => {
-    User.findById(req.session.userId).then((user) => {
-        if (!user) {
-            return res.redirect('/login');
-        }
+const authMiddleware = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/login');
         next();
-    }).catch(error => console.log(error));
-}
+    } catch (error) {
+        console.error('Error in authMiddleware:', error);
+        res.redirect('/login');
+    }
+};
 
 const authByAdmin = (req, res, next) => {
     if (userRole !== 'admin') {
         return res.redirect('/manage/product');
     }
-    console.log('logged in by admin');
+    console.log('Logged in by admin');
     next();
-}
+};
 
 const redirectIfAuth = (req, res, next) => {
     if (req.session.userId) {
         return res.redirect('/manage/product');
     }
     next();
-}
+};
 
 module.exports = {
     authMiddleware,
     authByAdmin,
-    redirectIfAuth
-}
+    redirectIfAuth,
+};
