@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<<<<<<< HEAD
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,20 @@
      <link href="/css/form_login.css" rel="stylesheet">
 
 </head>
+=======
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/images/home/icons.png">
+    <title>Login</title>
+
+    <!-- Custom styles for this template -->
+    <link href="/css/form_login.css" rel="stylesheet">
+
+</head>
+
+>>>>>>> 85971e9 (refactor product controller)
 <body>
     <section>
         <div class="form-login">
@@ -16,6 +31,7 @@
                 <h2>Login</h2>
                 <form action="/user/login" method="POST">
                     <div class="alert-msg">
+<<<<<<< HEAD
                         <% if (errors != '') { %>
                             <p class="alert alert-danger text-sm-center">
                                 <%= errors %>
@@ -25,16 +41,37 @@
                     <div class="input-box">
                         <ion-icon name="person-outline"></ion-icon>
                         <input type="text" name="username" class="form-control" id="floatingInput" value="<%= username %>" required>
+=======
+                        <% if (errors !='' ) { %>
+                            <p class="alert alert-danger text-sm-center">
+                                <%= errors %>
+                            </p>
+                            <% } %>
+                    </div>
+                    <div class="input-box">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <input type="text" name="username" class="form-control" id="floatingInput"
+                            value="<%= username %>" required>
+>>>>>>> 85971e9 (refactor product controller)
                         <label for="floatingInput">Username</label>
                     </div>
                     <div class="input-box">
                         <ion-icon name="lock-closed-outline"></ion-icon>
+<<<<<<< HEAD
                         <input type="password" name="password" class="form-control" id="floatingPassword"
                         required>
                       <label for="floatingPassword">Password</label>
                     </div>
                     <div class="forget">
                         <label for="forgetPassword"><input type="checkbox">Remember Me <a href="#">Forget Password</a></label>
+=======
+                        <input type="password" name="password" class="form-control" id="floatingPassword" required>
+                        <label for="floatingPassword">Password</label>
+                    </div>
+                    <div class="forget">
+                        <label for="forgetPassword"><input type="checkbox">Remember Me <a href="#">Forget
+                                Password</a></label>
+>>>>>>> 85971e9 (refactor product controller)
                     </div>
                     <button type="submit" class="btn-login">Log in</button>
                 </form>
@@ -44,4 +81,8 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 85971e9 (refactor product controller)
 </html>

@@ -1,5 +1,8 @@
 const Product = require("../models/Products");
+<<<<<<< HEAD
 const User = require("../models/User");
+=======
+>>>>>>> 85971e9 (refactor product controller)
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
@@ -19,6 +22,7 @@ const storage = new CloudinaryStorage({
         folder: 'online_store_products',
         format: async (req, file) => 'jpg',
         public_id: async (req, file) => Date.now().toString(),
+<<<<<<< HEAD
     }
 });
 
@@ -26,6 +30,59 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 // ================ CRUD =============== //
+=======
+        overwrite: true
+    }
+});
+
+const upload = multer({ storage: storage });
+
+const uploadToCloudinary = async (file, folder = 'online_store_products') => {
+    try {
+        const uploadResult = await cloudinary.uploader.upload(file, {
+            folder: folder,
+            public_id: Date.now().toString(),
+            overwrite: true,
+            transformation: [
+                { width: 500, height: 500, crop: 'limit' },
+                { quality: 'auto' },
+                { fetch_format: 'auto' }
+            ]
+        });
+
+        return uploadResult;
+    } catch (error) {
+        console.error('Error uploading to Cloudinary:', error);
+        throw error;
+    }
+};
+
+const deleteOriginalFileName = async (folder, original_filename) => {
+    try {
+        const deleteResult = await cloudinary.api.delete_resources(`${folder}/${original_filename}`, {
+            type: 'upload',
+            resource_type: 'image',
+        });
+        return deleteResult;
+    } catch (error) {
+        console.error('Error deleting original filename from Cloudinary:', error);
+        throw error;
+    }
+};
+
+const deleteFromCloudinary = async (publicId, folder) => {
+    try {
+        const deleteResult = await cloudinary.api.delete_resources(`${folder}/${publicId}`, {
+            type: 'upload',
+            resource_type: 'image',
+        });
+        return deleteResult;
+    } catch (error) {
+        console.error('Error deleting from Cloudinary:', error);
+        throw error;
+    }
+};
+>>>>>>> 85971e9 (refactor product controller)
 
 let validationSuccess = '';
 
@@ -36,6 +93,7 @@ const insertProduct = async (req, res) => {
 
         // Upload an image
         if (req.file) {
+<<<<<<< HEAD
             const uploadResult = await cloudinary.uploader
                 .upload(
                     req.file.path, {
@@ -73,6 +131,15 @@ const insertProduct = async (req, res) => {
             });
 
             console.log('autoCropUrl: ', autoCropUrl);
+=======
+            const uploadResult = await uploadToCloudinary(req.file.path);
+            imageUrl = uploadResult.secure_url;
+            console.log('uploadResult: ', uploadResult);
+
+            if (uploadResult.original_filename) {
+                await deleteOriginalFileName('online_store_products', uploadResult.original_filename).then(console.log)
+            }
+>>>>>>> 85971e9 (refactor product controller)
         }
 
         const doc = new Product({
@@ -92,6 +159,7 @@ const insertProduct = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 
 // Update Product
 const updateProduct = async (req, res) => {
@@ -100,10 +168,20 @@ const updateProduct = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(product_id)) {
         console.log('Invalid product ID');
+=======
+// Update Product
+const updateProduct = async (req, res) => {
+    const { product_id, name, price, details } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(product_id)) {
+        console.log('Invalid product ID');
+        req.flash('error', 'Invalid product ID');
+>>>>>>> 85971e9 (refactor product controller)
         return res.redirect('/manage/product');
     }
 
     try {
+<<<<<<< HEAD
         // Retrieve the product and handle the image removal in Cloudinary only if needed
         const product = await Product.findById(product_id);
         const currentImagePath = product.imagePath;
@@ -142,6 +220,56 @@ const updateProduct = async (req, res) => {
     } catch (error) {
         console.log('Error updating product:', error);
         return res.redirect('/manage/product');
+=======
+        const updateFields = {
+            name,
+            price,
+            description: details,
+            updated_by: `${loggedUser} at ${new Date()}`,
+            updated_at: new Date(),
+        };
+
+        if (req.file) {
+            // Fetch current product imagePath
+            const product = await Product.findById(product_id, 'imagePath');
+            if (!product) {
+                req.flash('error', 'Product not found');
+                return res.redirect('/manage/product');
+            }
+
+            // Delete old image if it exists
+            if (product.imagePath) {
+                const publicId = product.imagePath.split('/').pop().split('.')[0];
+                if (publicId) {
+                    await deleteFromCloudinary(publicId, 'online_store_products');
+                    console.log('Old Image Deleted:', publicId);
+                }
+            }
+
+            // Upload new image
+            const uploadResult = await uploadToCloudinary(req.file.path);
+            updateFields.imagePath = uploadResult.secure_url;
+            console.log('New Image Uploaded:', uploadResult.secure_url);
+
+            if (uploadResult.original_filename) {
+                await deleteOriginalFileName('online_store_products', uploadResult.original_filename).then(console.log);
+            }
+        }
+
+        // Update product in the database
+        const updatedProduct = await Product.findByIdAndUpdate(product_id, updateFields, { new: true });
+        if (!updatedProduct) {
+            req.flash('error', 'Product not found');
+            return res.redirect('/manage/product');
+        }
+
+        req.flash('validationSuccess', `Product ${updatedProduct.name} updated successfully`);
+        res.redirect('/manage/product');
+    } catch (error) {
+        console.error('Update product error:', error);
+        req.flash('error', 'Error updating product');
+        res.redirect('/manage/product');
+>>>>>>> 85971e9 (refactor product controller)
     }
 };
 
@@ -161,12 +289,19 @@ const deleteProdoctById = async (req, res) => {
             if (imagePath) {
                 const publicId = imagePath.split('/').pop().split('.')[0]; // Extract public ID
                 console.log('publicId:', publicId);
+<<<<<<< HEAD
                 await cloudinary.api.delete_resources('online_store_products/' + publicId, {
                     type: 'upload',
                     resource_type: 'image'
                 }).then(console.log);
             }
 
+=======
+                await deleteFromCloudinary(publicId, 'online_store_products')
+                    .then(console.log)
+                    .catch(console.error);
+            }
+>>>>>>> 85971e9 (refactor product controller)
             await Product.findByIdAndDelete(product_id);
 
             req.flash('validationSuccess', `Product name: ${product.name} was deleted.`);
@@ -228,12 +363,19 @@ const mgrProducts = async (req, res) => {
     }
 
     try {
+<<<<<<< HEAD
         const user = await User.findById(loggedIn).exec();
+=======
+>>>>>>> 85971e9 (refactor product controller)
         const products = await Product.find(searchFilter).sort({ name: 1 }).exec();
 
         res.render('manageProducts', {
             products,
+<<<<<<< HEAD
             user,
+=======
+            loggedUser,
+>>>>>>> 85971e9 (refactor product controller)
             success: req.flash('validationSuccess')
         });
     } catch (error) {
