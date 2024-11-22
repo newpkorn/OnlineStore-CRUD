@@ -22,11 +22,9 @@ router.get('/login', authMiddleware.redirectIfAuth, userController.form_login);
 router.get('/register', authMiddleware.authByAdmin, userController.form_register);
 router.get('/logout', userController.logout);
 router.get('/user/update', userController.form_updateUser);
-
 router.get('/manage/user', authMiddleware.authByAdmin, userController.form_manageUsers);
 router.get('/admin/manage/user/:id',authMiddleware.authByAdmin, userController.form_admin_UpdateUser);
 router.get('/user/delete/:id', userController.deleteUser);
-
 
 
 router.post('/user/register', userController.storeUser);
