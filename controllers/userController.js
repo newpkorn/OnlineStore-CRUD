@@ -403,6 +403,7 @@ const form_register = (req, res) => {
 
     let fullname = ""
     let email = ""
+    let role = ""
     let username = ""
     let password = ""
     let data = req.flash('data')[0];
@@ -410,6 +411,7 @@ const form_register = (req, res) => {
     if(typeof data != "undefined") {
         fullname = data.fullname
         email = data.email
+        role = data.role
         username = data.username
         password = data.password
     }
@@ -419,6 +421,7 @@ const form_register = (req, res) => {
         success: req.flash('validationSuccess'),
         fullname: fullname,
         email: email,
+        role: role,
         username: username,
         password: password
     });
@@ -497,7 +500,8 @@ const form_admin_UpdateUser = (req, res) => {
         if (user) {
             res.render('form_admin_updateUser', {
                 errors: req.flash('validationErrors'),
-                user
+                user,
+                userRole,
             });
         }
     }).catch(error => console.log(error));
