@@ -1,0 +1,83 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/images/home/icons.png">
+    <title>Online Store</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" crossorigin="anonymous" />
+    <script src="js/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="js/popper.min.js" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/all.css" crossorigin="anonymous" />
+</head>
+
+<body>
+    <%- include('navbar') %>
+
+        <!-- Modal -->
+        <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalLabel"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img class="card-img-top img-fluid mb-4" id="modalImage" />
+                        <div class="m-auto">
+                            <h4 id="modalProductName"></h4>
+                            <h5 id="modalProductPrice"></h5>
+                            <p class="card-text" id="modalProductDescription"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row my-3">
+                <% Object.values(products).forEach((items)=>{ %>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-content" data-name="<%= items.name %>" data-image="<%= items.imagePath %>"
+                                data-price="<%= items.price %> THB" data-description="<%= items.description %>">
+                                <a href="#">
+                                    <img class="card-img-top" src="<%= items.imagePath %>" />
+                                </a>
+                                <div class="card-body">
+                                    <h4 class="card-title">
+                                        <a href="#">
+                                            <%= items.name %>
+                                        </a>
+                                    </h4>
+                                    <h5>
+                                        <%= items.price %> THB.
+                                    </h5>
+                                    <p class="card-text">
+                                        <%= items.description %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+        </div>
+
+        <script src="js/modal-handlers.js"></script>
+
+        <style>
+            .modal-open-fix {
+                position: fixed;
+                width: 100%;
+                overflow: hidden;
+            }
+        </style>
+
+</body>
+
+</html>

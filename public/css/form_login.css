@@ -1,0 +1,131 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.alert {
+    position: relative;
+    padding: 1rem 1rem;
+    margin: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem
+}
+
+.alert-danger {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7
+}
+
+.text-sm-center {
+    text-align: center !important
+}
+
+section {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    background: url('/images/bg/home-bg.jpg')no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.form-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    position: relative;
+    width: 400px;
+    height: 450px;
+}
+
+h2 {
+    font-size: 2em;
+    color: rgba(0, 0, 0, 0.476);
+    text-align: center;
+}
+
+.input-box {
+    position: relative;
+    margin: 30px 0;
+    width: 310px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.476);
+}
+
+.input-box label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: rgba(0, 0, 0, 0.476);
+    font-size: 1em;
+    pointer-events: none;
+    transition: .5s;
+}
+
+input:focus ~ label,
+input:valid ~ label {
+    top: -5px;
+}
+
+.input-box input {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.476);
+    padding: 0 35px 5px 0;
+}
+
+.input-box ion-icon {
+    position: absolute;
+    right: 8px;
+    color: rgba(0, 0, 0, 0.476);
+    font-size: 1.2em;
+    top: 20px;
+}
+
+.forget {
+    display: flex;
+    justify-content: center;
+    margin: -15px 0 15px;
+    font-size: .9em;
+    color: rgba(0, 0, 0, 0.476);
+}
+
+.forget label input {
+    margin-right: 3px;
+}
+
+.forget label a {
+    color: rgba(0, 0, 0, 0.476);
+    text-decoration: none;
+}
+
+.forget label a:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.btn-login {
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.476);
+}
