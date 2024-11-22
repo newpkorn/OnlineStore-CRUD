@@ -4,10 +4,9 @@ const router = express.Router();
 // Middleware.
 const authMiddleware = require('../middleware/authMiddleware');
 
-// Controllers.
+//  Controllers.
 const productController = require('../controllers/productController');
 const userController = require('../controllers/userController')
-const userController = require('../controllers/userController');
 
 // Routes.
 router.get('/', productController.getAllProducts);
@@ -19,15 +18,15 @@ router.get('/updateProduct/:id', productController.form_updateProduct);
 router.post('/insert', productController.upload.single('image'), productController.insertProduct);
 router.post('/updateProduct', productController.upload.single('image'), productController.updateProduct);
 
-
 router.get('/login', authMiddleware.redirectIfAuth, userController.form_login);
 router.get('/register', authMiddleware.authByAdmin, userController.form_register);
 router.get('/logout', userController.logout);
 router.get('/user/update', userController.form_updateUser);
 
 router.get('/manage/user', authMiddleware.authByAdmin, userController.form_manageUsers);
-router.get('/admin/manage/user/:id', authMiddleware.authByAdmin, userController.form_admin_UpdateUser);
+router.get('/admin/manage/user/:id',authMiddleware.authByAdmin, userController.form_admin_UpdateUser);
 router.get('/user/delete/:id', userController.deleteUser);
+
 
 
 router.post('/user/register', userController.storeUser);
@@ -36,7 +35,5 @@ router.post('/user/update', userController.updateUser);
 
 router.post('/admin/user/update', userController.admin_userUpdate);
 
-// Added test route
-router.get('/products', (req, res) => res.send('Test route'));
 
 module.exports = router;
