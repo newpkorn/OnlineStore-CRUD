@@ -142,7 +142,7 @@ const updateUser = async (req, res) => {
 
 // Update user info by Admin
 const admin_userUpdate = async (req, res) => {
-    const { fullname, email, username, password, user_id } = req.body;
+    const { fullname, email, role, username, password, user_id } = req.body;
 
     try {
         const currentUser = await User.findById(user_id);
@@ -151,7 +151,7 @@ const admin_userUpdate = async (req, res) => {
             return res.redirect(`/admin/manage/user/${user_id}`);
         }
 
-        const updates = { fullname, email, username, updated_by: loggedUser, updated_at: new Date() };
+        const updates = { fullname, email, role, username, updated_by: loggedUser, updated_at: new Date() };
         let errors = "";
 
         if (email !== currentUser.email && (await User.exists({ email, _id: { $ne: currentUser._id } }))) {
@@ -247,6 +247,7 @@ const form_manageUsers = async (req, res) => {
         if (req.originalUrl.includes('/manage/user')) {
             res.render('form_admin_manageUser', {
                 users,
+                errors: req.flash('validationErrors'),
                 success: req.flash('validationSuccess'),
             });
         } else if (req.originalUrl.includes(`/admin/manage/user/${user_id}`)) {

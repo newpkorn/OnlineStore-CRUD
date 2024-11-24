@@ -100,56 +100,56 @@
                     <%= success %>
                 </p>
             <% } %>
-                <table>
-                        <thead class="tb-head">
-                            <tr>
-                                <th>Name</th>
-                                <th>Email Address</th>
-                                <th>Role</th>
-                                <th>Username</th>
-                                <th>Register By</th>
-                                <th>Last Update</th>
-                                <th colspan="2" style="text-align: center;">Manage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (users.length===0) { %>
-                                <td colspan="7" class="text-center">User not found</td>
-                                <% } else { %>
-                                    <% Object.values(users).forEach((user)=>{ %>
-                                        <tr>
-                                            <td>
-                                                <%= user.fullname %>
-                                            </td>
-                                            <td>
-                                                <%= user.email %>
-                                            </td>
-                                            <td>
-                                                <%= user.role %>
-                                            </td>
-                                            <td>
-                                                <%= user.username %>
-                                            </td>
-                                            <td>
-                                                <%= user.registered_by %>
-                                            </td>
-                                            <td>
-                                                <%= user.updated_by %>
-                                                    <%= user.updated_at %>
-                                            </td>
-                                            <td><a class="btn btn-danger" href="/user/delete/<%= user._id %>"
-                                                    onclick="return confirm('Do you want to delete user : <%= user.fullname %> ?')">ลบ</a>
-                                            </td>
-                                            <td>
-                                                <input type="hidden" name="user_id" value="<%= user._id %>">
-                                                <a class="btn btn-primary"
-                                                    href="/admin/manage/user/<%= user._id %>">แก้ไข</a>
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                            <% } %>
-                        </tbody>
-                </table>
+            <table>
+                    <thead class="tb-head">
+                        <tr>
+                            <th>Name</th>
+                            <th>Email Address</th>
+                            <th>Role</th>
+                            <th>Username</th>
+                            <th>Register By</th>
+                            <th>Last Update</th>
+                            <th colspan="2" style="text-align: center;">Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (users.length===0) { %>
+                            <td colspan="7" class="text-center">User not found</td>
+                            <% } else { %>
+                                <% Object.values(users).forEach((user)=>{ %>
+                                    <tr>
+                                        <td>
+                                            <%= user.fullname %>
+                                        </td>
+                                        <td>
+                                            <%= user.email %>
+                                        </td>
+                                        <td>
+                                            <%= user.role %>
+                                        </td>
+                                        <td>
+                                            <%= user.username %>
+                                        </td>
+                                        <td>
+                                            <%= user.registered_by %>
+                                        </td>
+                                        <td>
+                                            <%= user.updated_by %>
+                                                <%= user.updated_at %>
+                                        </td>
+                                        <td><a class="btn btn-danger" href="/user/delete/<%= user._id %>"
+                                                onclick="return confirm('Do you want to delete user : <%= user.fullname %> ?')">ลบ</a>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" name="user_id" value="<%= user._id %>">
+                                            <a class="btn btn-primary"
+                                                href="/admin/manage/user/<%= user._id %>">แก้ไข</a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } %>
+                    </tbody>
+            </table>
         </div>
 </body>
 
